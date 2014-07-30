@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>vectorscope example</title>
+	<script type="text/javascript" src="src/vectorscope.js"></script>
+
+	<style type="text/css">
+		body {
+			background-color: #000;
+		}
+	</style>
+</head>
+<body>
+
+<canvas id="vectorscope" data-vectorscope="" width="512" height="512"></canvas>
+
+<script type="text/javascript">
+window.onload = function() {
+	var canvas = document.getElementById('vectorscope'),
+		vectorscope = new Vectorscope(canvas),
+		img = new Image();
+
+	img.addEventListener('load', function() {
+		vectorscope.setImage(img);
+		vectorscope.refresh();
+	}, false);
+	img.src = 'lena.png';
+}
+</script>
+
+</body>
+</html>
