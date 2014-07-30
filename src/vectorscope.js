@@ -63,7 +63,7 @@ function Vectorscope(argCanvas, argOptions) {
 
 		// lines
 		hudCtx.strokeStyle = '#666';
-		hudCtx.setLineWidth(.25);
+		hudCtx.lineWidth = .25;
 
 		hudCtx.beginPath();
 		hudCtx.moveTo(center.x - radius, center.y);
@@ -76,7 +76,7 @@ function Vectorscope(argCanvas, argOptions) {
 		hudCtx.stroke();
 
 		// circles
-		hudCtx.setLineWidth(.5);
+		hudCtx.lineWidth = .5;
 		hudCtx.setLineDash([3]);
 
 		hudCtx.beginPath();
