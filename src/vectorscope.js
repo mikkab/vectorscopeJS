@@ -31,7 +31,8 @@ function Vectorscope(argCanvas, argOptions) {
 		image     = document.createElement('CANVAS'),
 		img       = image.getContext('2d'),
 		center    = new Point(canvas.width / 2, canvas.height / 2),
-		radius    = Math.max(Math.min(canvas.width, canvas.height), 10) / 2 - 10;
+		radius    = Math.max(Math.min(canvas.width, canvas.height), 10) / 2 - 10,
+		correction = function(phi) {return -phi * 2*Math.PI - Math.PI*3/5}
 
 	self.setImage = function(argImg) {
 		image.width  = argImg.width;
@@ -47,7 +48,7 @@ function Vectorscope(argCanvas, argOptions) {
 
 			hudCtx.fillStyle = 'rgb('+r+','+g+','+b+')';
 			hsv  = convertRGBtoHSV(r, g, b);
-			xy2d = convertPolarToCartesian(hsv.s * radius + 5, hsv.h * 2*Math.PI);
+			xy2d = convertPolarToCartesian(hsv.s * radius + 5, correction(hsv.h));
 			hudCtx.beginPath();
 			hudCtx.arc(xy2d.x + center.x, xy2d.y + center.y, 3, 0, 2*Math.PI);
 			hudCtx.fill();
@@ -123,14 +124,16 @@ function Vectorscope(argCanvas, argOptions) {
 			out = buffer.getImageData(0, 0, bufCanvas.width, bufCanvas.height)
 			dOut = out.data;
 
-		// for(var i=0; i!=100000; ++i) {
-		for(var i=0; i!=data.width*data.height; ++i) {
+		console.debug('start')
+		var step = Math.max((data.width*data.height) / 1000000, 1);
+		for(var ix=0, i; ix<data.width*data.height; ix+=step) {
+			i = parseInt(ix);
 			r = d[i*4+0];
 			g = d[i*4+1];
 			b = d[i*4+2];
 
 			hsv  = convertRGBtoHSV(r, g, b);
-			xy2d = convertPolarToCartesian(hsv.s * radius, hsv.h * 2*Math.PI);
+			xy2d = convertPolarToCartesian(hsv.s * radius, correction(hsv.h));
 			xy2d.x += center.x;
 			xy2d.y += center.y;
 			xy1d = parseInt(parseInt(xy2d.y) * out.width + xy2d.x) * 4;
@@ -141,6 +144,7 @@ function Vectorscope(argCanvas, argOptions) {
 			dOut[xy1d+3] = 255;
 		}
 		ctx.putImageData(out, 0, 0);
+		console.debug('stop')
 	}
 
 	self.refresh = function() {
